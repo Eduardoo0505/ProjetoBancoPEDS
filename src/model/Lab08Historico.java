@@ -89,7 +89,7 @@ public class Lab08Historico {
         }
     }
 
-    // Getters para agência e conta (opcionalmente úteis)
+    // Get para agência e conta
     public int getNumAge() {
         return numAge;
     }

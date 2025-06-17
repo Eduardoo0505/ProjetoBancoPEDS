@@ -26,6 +26,7 @@ public class Lab08ContaCorrente {
     public Lab08ContaCorrente(int numAge, int numConta) throws MyClassException {
         setNumAgencia(numAge);
         setNumConta(numConta);
+        recuperar();
     }
 
     // Getters e setters com validação
@@ -80,7 +81,10 @@ public class Lab08ContaCorrente {
             );
         }
         saldo -= valor;
+        gravar();
         System.out.printf("Saque realizado com sucesso. Novo saldo: R$ %.2f%n", saldo);
+        recuperar();
+        
     }
 
     // Método para depósito
@@ -89,7 +93,10 @@ public class Lab08ContaCorrente {
             throw new MyClassException("O valor do depósito deve ser positivo.", "Lab08ContaCorrente", "depositar");
         }
         saldo += valor;
+        gravar();
         System.out.printf("Depósito realizado com sucesso. Novo saldo: R$ %.2f%n", saldo);
+        recuperar();
+        
     }
 
     // Método para gravar os dados da conta
@@ -110,28 +117,33 @@ public class Lab08ContaCorrente {
         }
     }
 
-    // Método para recuperar os dados da conta
-    public void recuperar() throws MyClassException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(numAge + "." + numConta + ".dat"))) {
-            numAge = Integer.parseInt(reader.readLine());
-            numConta = Integer.parseInt(reader.readLine());
-            nome = reader.readLine();
-            saldo = Double.parseDouble(reader.readLine());
-            System.out.printf("Dados recuperados: Agência %04d, Conta %07d, Nome: %s, Saldo: R$ %.2f%n", numAge, numConta, nome, saldo);
-        } catch (IOException e) {
-            throw new MyClassException(
-                "Erro ao recuperar os dados do arquivo.",
-                "Lab08ContaCorrente",
-                "recuperar"
-            );
-        } catch (NumberFormatException e) {
-            throw new MyClassException(
-                "Erro no formato dos dados recuperados.",
-                "Lab08ContaCorrente",
-                "recuperar"
-            );
-        }
+// Método para recuperar os dados da conta a partir do arquivo
+public void recuperar() throws MyClassException {
+    String nomeArquivo = numAge + "." + numConta + ".dat";
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(nomeArquivo))) {
+        // Leitura em ordem: numAge, numConta, nome, saldo
+        this.numAge = Integer.parseInt(reader.readLine().trim());
+        this.numConta = Integer.parseInt(reader.readLine().trim());
+        this.nome = reader.readLine().trim();
+        this.saldo = Double.parseDouble(reader.readLine().trim());
+
+        System.out.printf("✅ Dados recuperados com sucesso:\nAgência: %04d | Conta: %07d | Nome: %s | Saldo: R$ %.2f%n",
+                numAge, numConta, nome, saldo);
+    } catch (IOException e) {
+        throw new MyClassException(
+            "Erro ao ler o arquivo de dados da conta: " + nomeArquivo,
+            "Lab08ContaCorrente",
+            "recuperar"
+        );
+    } catch (NumberFormatException e) {
+        throw new MyClassException(
+            "Erro ao converter dados do arquivo (formato inválido).",
+            "Lab08ContaCorrente",
+            "recuperar"
+        );
     }
+}
 
     // Método para imprimir os dados da conta
     public void imprimir() {
